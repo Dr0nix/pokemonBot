@@ -173,7 +173,8 @@ total.push(event6);
 total.push(event7);
 total.push(event8);
 total.push(event9);
-total.push(event10)
+total.push(event10);
+total.push(event11);
 
 total.sort((e1, e2) => (e1.month > e2.month) ? 1 : (e1.month < e2.month) ? -1 : 0);
 
