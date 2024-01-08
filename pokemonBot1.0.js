@@ -12,18 +12,19 @@ const scriptName = "pokemonGoEventBot";
  
 // ------------ 이 위로는 신경쓰지 않아도 됩니다. ----------------
 
-// ver 1.0
+// ver 1.5
 function response(room, msg, sender, isGroupChat, replier, imageDB, packageName) {
     let input = msg;
     let reMessage = "";
   
     // 여기서 기본 호출어 바꿀 수 있습니다.
-    if(input.indexOf("태식아") == 0) {
+    if(input.indexOf("태식아~") == 0) {
         if(input.indexOf("월") != -1) {
             let idx1 = input.indexOf("월");
+            let idx2 = input.indexOf("~") + 1;
 
-            let targetMonth = input.slice(3, idx1);
-            targetMonth = Number(targetMonth);
+            let temp = input.slice(idx2, idx1).trim();
+            let targetMonth = Number(temp);
 
             if(typeof(targetMonth) != Number) {
                 reMessage += "정확한 월을 입력해주세요. ";
@@ -50,6 +51,57 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
             else if(input.indexOf("이벤트") != -1) { reMessage += eventText + " "; }
 
             else if(input.indexOf("배틀") != -1) { reMessage += battleWeekText + " "; }
+
+            else if(input.indexOf("날씨") != -1) {
+                let idx = input.indexOf("날씨");
+                let location = input.slice(4, idx);
+            
+                if (isNaN(location))  {
+            
+                    try {
+            
+                        let url = org.jsoup.Jsoup.connect("https://www.google.com/search?q=" + location + " 날씨").get();
+            
+                        let resultDC = url.select("#wob_dc").text(); //상태?
+            
+                        let resultPP = url.select("#wob_pp").text(); //강수확률
+            
+                        let resultTM = url.select("#wob_tm").text(); //온도
+            
+                        let resultWS = url.select("#wob_ws").text(); //풍속
+            
+                        let resultHM = url.select("#wob_hm").text(); //습도
+            
+                        if(resultDC=="")  {
+            
+                            reMessage += "지금 현재 " + location + "의 날씨를 불러올 수 없습니다.";
+            
+                            return;
+            
+                        }
+            
+                        reMessage += "지금 현재 "+ location +"의 날씨는 \""+ resultDC + "\"입니다. 온도는 "+resultTM+"°C 입니다.\n\n강수확률: " + resultPP + "\n풍속: " + resultWS + "\n습도: " + resultHM;
+            
+                    }catch(e)  {
+            
+                        reMessage += "불러올 수 없는 지역이거나 지원되지 않는 지역입니다.";
+            
+                        return;
+            
+                    }
+            
+                } else {
+            
+                    reMessage += "지역을 잘못 나타냈어요(EX. 태식아~ 오늘 (지역) 날씨";
+            
+                    return;
+            
+                }
+                
+                    
+                
+            
+            }
 
             else { 
                 let ranNum = Math.floor(Math.random() * 2);
@@ -93,8 +145,6 @@ total.push(event2);
 
 
 total.sort((e1, e2) => (e1.month > e2.month) ? 1 : (e1.month < e2.month) ? -1 : 0);
-
-
 
 
 // ------------ 이밑으론 신경쓰지 않아도 됩니다. ----------------
